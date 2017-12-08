@@ -1,0 +1,14 @@
+<h2>User list...</h2>
+
+<div [hidden]="!loading">Loading data...</div>
+<input type="button" (click)="load_users()" value="Reload data" [disabled]="loading" />
+<ul>
+	<!-- Bind the click event to edit_user using the user parameter... -->
+	<li *ngFor="let user of user_list$ | async" (click)="edit_user(user)">
+		{{user.name}} has ({{user.dishes.length}}) dish(es)
+	</li>
+</ul>
+
+<div *ngIf="selected_user">
+	<user-detail [user]="selected_user"></user-detail>
+</div>

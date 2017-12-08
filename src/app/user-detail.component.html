@@ -1,0 +1,85 @@
+<h2>This is the user detail</h2>
+
+<!-- This binds the formGroup property of the form to userform in the component -->
+<div class="form">
+	<!-- Submit triggers onSubmit... -->
+	<form [formGroup]="userform" novalidate (ngSubmit)="form_submit()">
+		<input type="button" value="Discard changes" (click)="discard_changes()" [disabled]="userform.pristine && !dish_model_changed" />
+		<input type="submit" value="Confirm changes" [disabled]="!userform.valid || (userform.pristine && !dish_model_changed)" />
+		<div formGroupName="user">
+			<div>
+				<label>Name: <input type="text" formControlName="name" required /></label>
+				<div *ngIf="userform.get('user.name').invalid && (userform.get('user.name').dirty || userform.get('name').touched)">
+					<div *ngIf="userform.get('user.name').errors.required">
+						This field is required.
+					</div>
+					<div *ngIf="userform.get('user.name').errors.minlength">
+						You need at least 3 characters here.
+					</div>
+				</div>
+			</div>
+			<div>
+				<label>Email: <input type="text" formControlName="email" required /></label>
+				<div *ngIf="userform.get('user.email').invalid && (userform.get('user.email').dirty || userform.get('user.email').touched)">
+					<div *ngIf="userform.get('user.email').errors.required">
+						This field is required.
+					</div>
+					<div *ngIf="userform.get('user.email').errors.email">
+						This must be a valid email address.
+					</div>
+				</div>
+			</div>
+			<div>
+				<label>About this user:	<input type="text" formControlName="aboutme" /></label>
+			</div>
+			<div>
+				<label>
+					User level:
+					<select formControlName="type" required>
+						<option *ngFor="let type of user_types" [value]="type">{{type}}</option>
+					</select>
+				</label>
+				<div *ngIf="userform.get('user.type').invalid">
+					<div *ngIf="userform.get('type').errors.required">
+						This field is required.
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		<div formArrayName="uploaded_dishes">
+			<div *ngFor="let dish of get_dishes_formarray().controls; let i=index;" [formGroupName]="i">
+				<p>Dish {{i+1}}</p>
+				<div>
+					<label>Dish name: <input type="text" formControlName="name" required /></label>
+					<!-- There are no other active validators, so no need to check "errors" -->
+					<div *ngIf="dish.get('name').invalid && (dish.get('name').dirty || dish.get('name').touched)">
+						This field is required.
+					</div>
+				</div>
+				<div>
+					<label>Dish description: <input type="text" formControlName="description" required /></label>
+					<div *ngIf="dish.get('description').invalid && (dish.get('description').dirty || dish.get('description').touched)">
+						This field is required.
+					</div>
+				</div>
+				<div>
+					<label>
+						Dish type:
+						<select formControlName="type" required>
+							<option *ngFor="let type of dish_types" [value]="type">{{type}}</option>
+						</select>
+						<div *ngIf="dish.get('type').invalid">
+							This field is required.
+						</div>
+					</label>
+				</div>				
+				<input type="button" value="Delete" (click)="delete_dish_formarray(dish)" />
+			</div>
+			<input type="button" value="New Dish" (click)="create_dish_formarray()" />
+		</div>
+	</form>
+</div>
+<div class="tracker">Last user name was	{{name_changelog}}
+<!-- name_changelog was an array	<p *ngFor="let name of name_changelog">{{name}}</p>-->
+</div>
